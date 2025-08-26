@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelajaran Informatika - Berpikir Komputasional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #3a3a5a;
+        }
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .menu-item, .submenu-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .menu-item:hover, .submenu-item:hover {
+            background-color: #4a4a6a;
+            transform: translateX(5px);
+        }
+        .active-menu {
+            background-color: #e94560;
+            color: white;
+            font-weight: 700;
+        }
+        .card {
+            background: linear-gradient(145deg, #1e1e38, #2a2a4a);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(233, 69, 96, 0.3), 0 10px 10px -5px rgba(233, 69, 96, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #e94560, #9f3d5b);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(233, 69, 96, 0.4);
+        }
+        .progress-bar-inner {
+            transition: width 0.5s ease-in-out;
+        }
+        .podium-1 { border: 4px solid #ffd700; box-shadow: 0 0 20px #ffd700; }
+        .podium-2 { border: 4px solid #c0c0c0; box-shadow: 0 0 20px #c0c0c0; }
+        .podium-3 { border: 4px solid #cd7f32; box-shadow: 0 0 20px #cd7f32; }
+        
+        /* Animasi */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a6a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e94560;
+        }
+
+        /* Responsive iframe */
+        .iframe-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+        .responsive-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Sidebar -->
+    <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-50 opacity-0 pointer-events-none lg:hidden"></div>
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-64 bg-[#161625] text-white p-4 z-50 transform -translate-x-full lg:translate-x-0 flex flex-col">
+        <h2 class="text-2xl font-bold mb-8 text-center text-white flex-shrink-0">Informatika K7</h2>
+        <div class="flex-grow overflow-y-auto">
+            <nav>
+                <ul>
+                    <li><a href="#beranda" class="menu-item flex items-center p-3 rounded-lg mb-2 active-menu">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>Beranda</a></li>
+                    <li class="relative">
+                        <button class="menu-item w-full flex items-center p-3 rounded-lg mb-2 text-left" onclick="toggleSubmenu('materi-submenu')">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18"></path></svg>Materi
+                            <svg class="w-4 h-4 ml-auto transform transition-transform" id="materi-submenu-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="materi-submenu" class="pl-8 hidden">
+                            <li><a href="#materi1" class="submenu-item block p-2 rounded-lg mb-1">Konsep & Teknik</a></li>
+                            <li><a href="#materi2" class="submenu-item block p-2 rounded-lg mb-1">Implementasi Metode</a></li>
+                        </ul>
+                    </li>
+                    <li class="relative">
+                        <button class="menu-item w-full flex items-center p-3 rounded-lg mb-2 text-left" onclick="toggleSubmenu('kuis-submenu')">
+                             <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Kuis & Peringkat
+                            <svg class="w-4 h-4 ml-auto transform transition-transform" id="kuis-submenu-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="kuis-submenu" class="pl-8 hidden">
+                            <li><a href="#kuis" class="submenu-item block p-2 rounded-lg mb-1">Mulai Kuis</a></li>
+                            <li><a href="#peringkat" class="submenu-item block p-2 rounded-lg mb-1">Papan Peringkat</a></li>
+                        </ul>
+                    </li>
+                    <li class="relative">
+                        <button class="menu-item w-full flex items-center p-3 rounded-lg mb-2 text-left" onclick="toggleSubmenu('games-submenu')">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Games
+                            <svg class="w-4 h-4 ml-auto transform transition-transform" id="games-submenu-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="games-submenu" class="pl-8 hidden">
+                            <li><a href="#game1" class="submenu-item block p-2 rounded-lg mb-1">Game Dekomposisi</a></li>
+                            <li><a href="#game2" class="submenu-item block p-2 rounded-lg mb-1">Game Pola</a></li>
+                            <li><a href="#game3" class="submenu-item block p-2 rounded-lg mb-1">Game Algoritma</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="flex-shrink-0 mt-auto text-center text-xs text-gray-500">
+            <p>Copyright 2025</p>
+            <p>Aris Bermansyah, S.Kom</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64 transition-all duration-300">
+        <!-- Header -->
+        <header class="sticky-header flex items-center justify-between p-4">
+            <button id="menu-btn" class="text-white lg:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+            <h1 id="page-title" class="text-xl font-bold text-white">Beranda</h1>
+            <div></div> <!-- Spacer -->
+        </header>
+
+        <!-- Page Content -->
+        <main class="p-6">
+            <section id="beranda" class="page fade-in">
+                <div class="text-center mb-12">
+                    <img src="https://raw.githubusercontent.com/xiroro-ab/aris-bermansyah-komponen-sistem-komputer/refs/heads/main/IMG_7135.jpg" alt="Foto Aris Bermansyah" class="w-32 h-32 rounded-full mx-auto mb-6 object-cover border-4 border-[#e94560]">
+                    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Selamat Datang di Dunia <span class="text-[#e94560]">Berpikir Komputasional</span></h1>
+                    <p class="text-lg text-gray-300 max-w-3xl mx-auto">Platform interaktif untuk mempelajari dasar-dasar informatika bagi siswa kelas 7. Mari asah logika dan kemampuan memecahkan masalahmu!</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card p-6 rounded-xl text-center cursor-pointer" onclick="navigateTo('#materi1')">
+                        <div class="text-5xl mb-4">📚</div>
+                        <h3 class="text-2xl font-bold mb-2">Materi Belajar</h3>
+                        <p class="text-gray-400">Pahami konsep dasar Berpikir Komputasional melalui presentasi dan video menarik.</p>
+                    </div>
+                    <div class="card p-6 rounded-xl text-center cursor-pointer" onclick="navigateTo('#kuis')">
+                        <div class="text-5xl mb-4">🏆</div>
+                        <h3 class="text-2xl font-bold mb-2">Uji Kemampuan</h3>
+                        <p class="text-gray-400">Kerjakan kuis untuk mengukur pemahamanmu dan raih skor tertinggi!</p>
+                    </div>
+                    <div class="card p-6 rounded-xl text-center cursor-pointer" onclick="navigateTo('#game1')">
+                        <div class="text-5xl mb-4">🎮</div>
+                        <h3 class="text-2xl font-bold mb-2">Asah Logika</h3>
+                        <p class="text-gray-400">Bermain sambil belajar dengan game edukatif yang seru dan menantang.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="materi1" class="page hidden fade-in">
+                <h2 class="text-3xl font-bold mb-6">Materi 1: Konsep & Teknik Berpikir Komputasional</h2>
+                <div class="iframe-container rounded-lg overflow-hidden shadow-2xl">
+                    <iframe class="responsive-iframe" src="https://docs.google.com/presentation/d/e/2PACX-1vSvI9YzJi9eslwBxoK_jQOViRHovxeDCfEY098e4XjJnLzFCKYEi6foWFXm7YsygDUxDs8TVApXd2RM/embed?start=false&loop=true&delayms=3000" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                </div>
+            </section>
+
+            <section id="materi2" class="page hidden fade-in">
+                <h2 class="text-3xl font-bold mb-6">Materi 2: Implementasi Metode (Dekomposisi, Pola, Abstraksi, Algoritma)</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="iframe-container rounded-lg overflow-hidden shadow-2xl">
+                        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/umfcvkLdUgg?si=ZyrdzAcD4GtTNcxP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                    <div class="iframe-container rounded-lg overflow-hidden shadow-2xl">
+                        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/W7QHzuucy2A?si=KDPGtkpd9Q4D5HgC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <section id="kuis" class="page hidden fade-in">
+                <div id="quiz-register" class="max-w-md mx-auto card p-8 rounded-lg">
+                    <h2 class="text-3xl font-bold mb-6 text-center">Mulai Kuis</h2>
+                    <form id="register-form">
+                        <div class="mb-4">
+                            <label for="nama" class="block mb-2 font-medium">Nama Lengkap</label>
+                            <input type="text" id="nama" class="w-full p-3 bg-[#2a2a4a] rounded-lg border border-transparent focus:border-[#e94560] focus:outline-none" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="kelas" class="block mb-2 font-medium">Kelas</label>
+                            <select id="kelas" class="w-full p-3 bg-[#2a2a4a] rounded-lg border border-transparent focus:border-[#e94560] focus:outline-none" required>
+                                <option value="7.1">7.1</option>
+                                <option value="7.2">7.2</option>
+                                <option value="7.3">7.3</option>
+                                <option value="7.4">7.4</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label for="token" class="block mb-2 font-medium">Token</label>
+                            <input type="password" id="token" class="w-full p-3 bg-[#2a2a4a] rounded-lg border border-transparent focus:border-[#e94560] focus:outline-none" required>
+                        </div>
+                        <button type="submit" class="btn-primary w-full p-3 rounded-lg font-bold">Mulai</button>
+                        <p id="token-error" class="text-red-400 text-center mt-4 hidden">Token salah!</p>
+                    </form>
+                </div>
+
+                <div id="quiz-main" class="hidden max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <div id="timer" class="text-xl font-bold">02:00</div>
+                        <div class="text-lg font-medium">Soal <span id="question-number">1</span>/10</div>
+                    </div>
+                    <div class="w-full bg-[#2a2a4a] rounded-full h-4 mb-6">
+                        <div id="progress-bar" class="bg-gradient-to-r from-[#e94560] to-[#9f3d5b] h-4 rounded-full progress-bar-inner" style="width: 10%"></div>
+                    </div>
+                    <div class="card p-8 rounded-lg">
+                        <h3 id="question-text" class="text-2xl font-semibold mb-6"></h3>
+                        <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    </div>
+                </div>
+
+                <div id="quiz-result" class="hidden text-center max-w-md mx-auto card p-8 rounded-lg">
+                    <h2 class="text-3xl font-bold mb-2">Kuis Selesai!</h2>
+                    <p class="text-lg mb-4">Skor Akhir Anda:</p>
+                    <div id="final-score" class="text-7xl font-extrabold text-[#e94560] mb-8">100</div>
+                    <div class="flex justify-center gap-4">
+                        <button id="redo-quiz-btn" class="btn-primary p-3 rounded-lg font-bold">Kerjakan Ulang</button>
+                        <button onclick="navigateTo('#peringkat')" class="bg-gray-600 hover:bg-gray-700 transition-colors p-3 rounded-lg font-bold">Lihat Peringkat</button>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="peringkat" class="page hidden fade-in">
+                 <h2 class="text-3xl font-bold mb-6 text-center">Papan Peringkat</h2>
+                 <div id="leaderboard-loading" class="text-center">Memuat data...</div>
+                 <div id="leaderboard-content" class="hidden">
+                     <!-- Podium -->
+                     <div class="flex justify-center items-end gap-4 mb-12">
+                         <div id="podium-2" class="text-center w-1/4">
+                             <div class="bg-[#1e1e38] p-4 rounded-lg podium-2">
+                                 <div class="text-4xl">🥈</div>
+                                 <h3 class="font-bold text-lg truncate"></h3>
+                                 <p class="text-2xl font-bold text-gray-300"></p>
+                             </div>
+                         </div>
+                         <div id="podium-1" class="text-center w-1/3">
+                              <div class="bg-[#1e1e38] p-6 rounded-lg podium-1">
+                                 <div class="text-5xl">🥇</div>
+                                 <h3 class="font-bold text-xl truncate"></h3>
+                                 <p class="text-3xl font-bold text-yellow-300"></p>
+                             </div>
+                         </div>
+                         <div id="podium-3" class="text-center w-1/4">
+                              <div class="bg-[#1e1e38] p-4 rounded-lg podium-3">
+                                 <div class="text-4xl">🥉</div>
+                                 <h3 class="font-bold text-lg truncate"></h3>
+                                 <p class="text-2xl font-bold text-orange-400"></p>
+                             </div>
+                         </div>
+                     </div>
+                     <!-- Full Table -->
+                     <div class="max-w-4xl mx-auto bg-[#1e1e38] rounded-lg overflow-hidden">
+                         <table class="w-full text-left">
+                             <thead class="bg-[#2a2a4a]">
+                                 <tr>
+                                     <th class="p-4">Peringkat</th>
+                                     <th class="p-4">Nama</th>
+                                     <th class="p-4">Kelas</th>
+                                     <th class="p-4 text-right">Skor</th>
+                                 </tr>
+                             </thead>
+                             <tbody id="leaderboard-table">
+                                 <!-- Data akan diisi oleh JavaScript -->
+                             </tbody>
+                         </table>
+                     </div>
+                 </div>
+            </section>
+
+            <section id="game1" class="page hidden fade-in">
+                <h2 class="text-3xl font-bold mb-6">Game 1: Dekomposisi - Menyusun Langkah</h2>
+                <div class="max-w-3xl mx-auto text-center">
+                    <p class="mb-4">Susunlah langkah-langkah membuat nasi goreng dengan benar. Seret langkah dari "Pilihan Langkah" ke "Urutanmu".</p>
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-bold mb-2">Pilihan Langkah</h3>
+                            <div id="source-steps" class="bg-[#1e1e38] p-4 rounded-lg min-h-[200px]"></div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-2">Urutanmu</h3>
+                            <div id="target-steps" class="bg-[#1e1e38] p-4 rounded-lg min-h-[200px]"></div>
+                        </div>
+                    </div>
+                    <button id="check-decomposition" class="btn-primary mt-6 p-3 rounded-lg font-bold">Periksa Jawaban</button>
+                    <p id="decomposition-result" class="mt-4 font-bold"></p>
+                </div>
+            </section>
+            
+            <section id="game2" class="page hidden fade-in">
+                <h2 class="text-3xl font-bold mb-6">Game 2: Pengenalan Pola - Lanjutkan Pola</h2>
+                 <div class="max-w-md mx-auto text-center card p-8 rounded-lg">
+                    <p class="mb-4">Perhatikan pola berikut dan tentukan gambar selanjutnya!</p>
+                    <div id="pattern-display" class="flex justify-center items-center text-4xl gap-4 mb-6 h-12"></div>
+                    <div id="pattern-options" class="flex justify-center gap-4 text-4xl mb-6"></div>
+                    <p id="pattern-result" class="mt-4 font-bold h-6"></p>
+                    <button id="next-pattern" class="btn-primary mt-4 p-3 rounded-lg font-bold">Pola Selanjutnya</button>
+                </div>
+            </section>
+
+            <section id="game3" class="page hidden fade-in">
+                <h2 class="text-3xl font-bold mb-6">Game 3: Algoritma - Petualangan Labirin</h2>
+                <div class="max-w-4xl mx-auto text-center">
+                    <p class="mb-4">Buat urutan perintah untuk membantu 🤖 mencapai 🏁. Hindari rintangan 🧱!</p>
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
+                        <div id="maze-container" class="grid grid-cols-8 gap-1 mx-auto bg-[#1e1e38] p-2 rounded-lg w-64 h-64 md:w-80 md:h-80"></div>
+                        <div>
+                            <h3 class="font-bold">Perintah:</h3>
+                            <div id="command-list" class="bg-[#1e1e38] p-2 rounded-lg min-h-[50px] mb-2"></div>
+                            <div class="grid grid-cols-3 gap-2 mb-4">
+                                <button class="command-btn bg-gray-600 p-2 rounded" data-command="⬆️">⬆️</button>
+                                <button class="command-btn bg-gray-600 p-2 rounded" data-command="⬇️">⬇️</button>
+                                <button class="command-btn bg-gray-600 p-2 rounded" data-command="⬅️">⬅️</button>
+                                <button class="command-btn bg-gray-600 p-2 rounded" data-command="➡️">➡️</button>
+                                <button id="clear-commands" class="bg-yellow-600 p-2 rounded col-span-2">Hapus</button>
+                            </div>
+                            <button id="run-algorithm" class="btn-primary w-full p-3 rounded-lg font-bold">Jalankan</button>
+                            <p id="algorithm-result" class="mt-4 font-bold"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- GLOBAL VARIABLES ---
+            const SPREADSHEET_URL = 'https://script.google.com/macros/s/AKfycby19R85e1KaAdLWaTU37cU0cnvrQ6oA4oRy_rELze0rX0lq9FzDu5Y5cbCjIkYbsZ5f/exec';
+            
+            // --- NAVIGATION ---
+            const menuBtn = document.getElementById('menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const pages = document.querySelectorAll('.page');
+            const menuItems = document.querySelectorAll('.menu-item, .submenu-item');
+            const pageTitle = document.getElementById('page-title');
+
+            const toggleSidebar = () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('opacity-0');
+                sidebarOverlay.classList.toggle('pointer-events-none');
+            };
+
+            menuBtn.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', toggleSidebar);
+
+            window.navigateTo = (hash) => {
+                if (window.innerWidth < 1024) {
+                    toggleSidebar();
+                }
+                showPage(hash);
+            }
+
+            const showPage = (hash) => {
+                const targetId = hash.substring(1);
+                pages.forEach(page => {
+                    page.classList.toggle('hidden', page.id !== targetId);
+                });
+
+                let activeItemFound = false;
+                menuItems.forEach(item => {
+                    item.classList.remove('active-menu');
+                    if (item.getAttribute('href') === hash) {
+                        item.classList.add('active-menu');
+                        let title = item.innerText;
+                        pageTitle.textContent = title;
+                        
+                        const parentSubmenu = item.closest('ul[id$="-submenu"]');
+                        if(parentSubmenu){
+                           const parentButton = parentSubmenu.previousElementSibling;
+                           parentButton.classList.add('active-menu');
+                           if(parentSubmenu.classList.contains('hidden')){
+                                parentButton.click();
+                           }
+                        }
+                        activeItemFound = true;
+                    }
+                });
+
+                // Handle case for main menu items that are buttons
+                if(!activeItemFound){
+                     menuItems.forEach(item => {
+                        if(item.tagName === 'BUTTON'){
+                            const submenu = item.nextElementSibling;
+                            if(submenu && submenu.querySelector(`a[href="${hash}"]`)){
+                                item.classList.add('active-menu');
+                            }
+                        }
+                     });
+                }
+
+                window.location.hash = hash;
+            };
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (item.tagName === 'A') {
+                        e.preventDefault();
+                        const hash = item.getAttribute('href');
+                        navigateTo(hash);
+                    }
+                });
+            });
+
+            // Handle initial page load based on hash
+            const initialHash = window.location.hash || '#beranda';
+            showPage(initialHash);
+
+            window.toggleSubmenu = (submenuId) => {
+                const submenu = document.getElementById(submenuId);
+                const arrow = document.getElementById(`${submenuId}-arrow`);
+                submenu.classList.toggle('hidden');
+                arrow.classList.toggle('rotate-180');
+            };
+
+            // --- KUIS ---
+            const quizQuestions = [
+                { question: "Memecah masalah besar menjadi bagian-bagian kecil yang lebih mudah dikelola disebut...", options: ["Abstraksi", "Dekomposisi", "Pengenalan Pola", "Algoritma"], answer: 1 },
+                { question: "Mencari kesamaan atau tren di antara bagian-bagian masalah adalah inti dari...", options: ["Dekomposisi", "Abstraksi", "Pengenalan Pola", "Logika"], answer: 2 },
+                { question: "Fokus pada informasi penting dan mengabaikan detail yang tidak relevan adalah proses...", options: ["Algoritma", "Pengenalan Pola", "Dekomposisi", "Abstraksi"], answer: 3 },
+                { question: "Urutan langkah-langkah logis untuk menyelesaikan masalah disebut...", options: ["Algoritma", "Prosedur", "Pola", "Abstraksi"], answer: 0 },
+                { question: "Saat menyusun resep masakan, kita sedang menerapkan konsep...", options: ["Abstraksi", "Pengenalan Pola", "Algoritma", "Dekomposisi"], answer: 2 },
+                { question: "Mengelompokkan hewan berdasarkan jenisnya (mamalia, reptil, dll) adalah contoh dari...", options: ["Pengenalan Pola", "Dekomposisi", "Algoritma", "Abstraksi"], answer: 0 },
+                { question: "Manakah yang BUKAN merupakan pilar Berpikir Komputasional?", options: ["Dekomposisi", "Kreativitas", "Abstraksi", "Algoritma"], answer: 1 },
+                { question: "Saat merakit sebuah furnitur dari instruksi, langkah pertama biasanya adalah 'mengidentifikasi semua komponen'. Ini adalah contoh dari...", options: ["Algoritma", "Dekomposisi", "Abstraksi", "Pengenalan Pola"], answer: 1 },
+                { question: "Flowchart atau diagram alir digunakan untuk merepresentasikan sebuah...", options: ["Dekomposisi", "Pola", "Algoritma", "Abstraksi"], answer: 2 },
+                { question: "Tujuan utama Berpikir Komputasional adalah untuk...", options: ["Menjadi programmer", "Memecahkan masalah secara efektif", "Menggunakan komputer", "Menghafal rumus"], answer: 1 },
+            ];
+
+            const registerForm = document.getElementById('register-form');
+            const tokenInput = document.getElementById('token');
+            const tokenError = document.getElementById('token-error');
+            const quizRegister = document.getElementById('quiz-register');
+            const quizMain = document.getElementById('quiz-main');
+            const quizResult = document.getElementById('quiz-result');
+            const timerEl = document.getElementById('timer');
+            const progressBar = document.getElementById('progress-bar');
+            const questionNumberEl = document.getElementById('question-number');
+            const questionTextEl = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const finalScoreEl = document.getElementById('final-score');
+            const redoQuizBtn = document.getElementById('redo-quiz-btn');
+
+            let currentQuestionIndex = 0;
+            let userAnswers = [];
+            let timerInterval;
+            let score = 0;
+            let userInfo = {};
+
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (tokenInput.value === '1234') {
+                    tokenError.classList.add('hidden');
+                    userInfo = {
+                        nama: document.getElementById('nama').value,
+                        kelas: document.getElementById('kelas').value
+                    };
+                    quizRegister.classList.add('hidden');
+                    quizMain.classList.remove('hidden');
+                    startQuiz();
+                } else {
+                    tokenError.classList.remove('hidden');
+                }
+            });
+
+            const startQuiz = () => {
+                currentQuestionIndex = 0;
+                userAnswers = [];
+                score = 0;
+                quizResult.classList.add('hidden');
+                quizMain.classList.remove('hidden');
+                displayQuestion();
+                startTimer();
+            };
+            
+            const startTimer = () => {
+                let timeLeft = 120;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        finishQuiz();
+                    }
+                }, 1000);
+            };
+
+            const displayQuestion = () => {
+                const question = quizQuestions[currentQuestionIndex];
+                questionTextEl.textContent = question.question;
+                questionNumberEl.textContent = currentQuestionIndex + 1;
+                progressBar.style.width = `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%`;
+                optionsContainer.innerHTML = '';
+                question.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.className = 'p-4 bg-[#2a2a4a] rounded-lg text-left transition-colors hover:bg-[#4a4a6a]';
+                    button.onclick = () => selectAnswer(index);
+                    optionsContainer.appendChild(button);
+                });
+            };
+
+            const selectAnswer = (selectedIndex) => {
+                userAnswers[currentQuestionIndex] = selectedIndex;
+                currentQuestionIndex++;
+                if (currentQuestionIndex < quizQuestions.length) {
+                    displayQuestion();
+                } else {
+                    finishQuiz();
+                }
+            };
+
+            const finishQuiz = () => {
+                clearInterval(timerInterval);
+                calculateScore();
+                quizMain.classList.add('hidden');
+                quizResult.classList.remove('hidden');
+                finalScoreEl.textContent = score;
+                saveScore();
+            };
+
+            const calculateScore = () => {
+                let correctAnswers = 0;
+                quizQuestions.forEach((q, index) => {
+                    if (q.answer === userAnswers[index]) {
+                        correctAnswers++;
+                    }
+                });
+                score = Math.round((correctAnswers / quizQuestions.length) * 100);
+            };
+
+            const saveScore = () => {
+                const formData = new FormData();
+                formData.append('nama', userInfo.nama);
+                formData.append('kelas', userInfo.kelas);
+                formData.append('skor', score);
+
+                fetch(SPREADSHEET_URL, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Score saved:', data);
+                    // Refresh leaderboard data after saving
+                    if(document.getElementById('peringkat').classList.contains('hidden') === false){
+                        loadLeaderboard();
+                    }
+                })
+                .catch(error => console.error('Error saving score:', error));
+            };
+
+            redoQuizBtn.addEventListener('click', () => {
+                quizResult.classList.add('hidden');
+                quizRegister.classList.remove('hidden');
+                registerForm.reset();
+            });
+            
+            // --- LEADERBOARD ---
+            const leaderboardLoading = document.getElementById('leaderboard-loading');
+            const leaderboardContent = document.getElementById('leaderboard-content');
+            const leaderboardTable = document.getElementById('leaderboard-table');
+            const podiumElements = {
+                1: document.getElementById('podium-1'),
+                2: document.getElementById('podium-2'),
+                3: document.getElementById('podium-3'),
+            };
+
+            const loadLeaderboard = async () => {
+                leaderboardLoading.style.display = 'block';
+                leaderboardContent.classList.add('hidden');
+                
+                try {
+                    // Fetching data directly from the Google Apps Script URL.
+                    // The script needs to be deployed correctly to handle GET requests from anyone.
+                    const response = await fetch(SPREADSHEET_URL);
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    const data = await response.json();
+                    
+                    // Filter out entries with invalid scores and sort the data.
+                    // Assumes the script returns an array of objects with 'Skor', 'Nama', 'Kelas'.
+                    const sortedData = data
+                        .filter(player => player.Skor !== undefined && player.Skor !== null && player.Nama)
+                        .sort((a, b) => b.Skor - a.Skor);
+
+                    updateLeaderboardUI(sortedData);
+
+                } catch (error) {
+                    console.error('Error loading leaderboard:', error);
+                    leaderboardLoading.textContent = 'Gagal memuat data. Pastikan Google Script sudah di-deploy dengan benar.';
+                }
+            };
+
+            const updateLeaderboardUI = (data) => {
+                // Clear previous data
+                leaderboardTable.innerHTML = '';
+                Object.values(podiumElements).forEach(el => {
+                    el.querySelector('h3').textContent = '-';
+                    el.querySelector('p').textContent = '-';
+                    el.style.visibility = 'hidden';
+                });
+
+                // Populate podium
+                data.slice(0, 3).forEach((player, index) => {
+                    const rank = index + 1;
+                    const podiumEl = podiumElements[rank];
+                    if (podiumEl) {
+                        podiumEl.querySelector('h3').textContent = player.Nama;
+                        podiumEl.querySelector('p').textContent = player.Skor;
+                        podiumEl.style.visibility = 'visible';
+                    }
+                });
+
+                // Populate table
+                data.forEach((player, index) => {
+                    const rank = index + 1;
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-[#2a2a4a] hover:bg-[#2a2a4a]';
+                    row.innerHTML = `
+                        <td class="p-4 font-bold">${rank}</td>
+                        <td class="p-4">${player.Nama}</td>
+                        <td class="p-4">${player.Kelas}</td>
+                        <td class="p-4 text-right font-bold text-[#e94560]">${player.Skor}</td>
+                    `;
+                    leaderboardTable.appendChild(row);
+                });
+
+                leaderboardLoading.style.display = 'none';
+                leaderboardContent.classList.remove('hidden');
+            };
+            
+            // Load leaderboard when the page is visited
+            const leaderboardObserver = new MutationObserver((mutations) => {
+              mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class' && !document.getElementById('peringkat').classList.contains('hidden')) {
+                  loadLeaderboard();
+                }
+              });
+            });
+            leaderboardObserver.observe(document.getElementById('peringkat'), { attributes: true });
+
+            // --- GAMES ---
+            // Game 1: Dekomposisi
+            const sourceStepsEl = document.getElementById('source-steps');
+            const targetStepsEl = document.getElementById('target-steps');
+            const checkDecompositionBtn = document.getElementById('check-decomposition');
+            const decompositionResultEl = document.getElementById('decomposition-result');
+            
+            const correctOrder = ["Siapkan bahan", "Haluskan bumbu", "Tumis bumbu", "Masukkan nasi", "Aduk rata & sajikan"];
+            let steps = [...correctOrder].sort(() => Math.random() - 0.5);
+
+            const initDecompositionGame = () => {
+                sourceStepsEl.innerHTML = '';
+                targetStepsEl.innerHTML = '';
+                decompositionResultEl.textContent = '';
+                steps.forEach(step => {
+                    const el = document.createElement('div');
+                    el.textContent = step;
+                    el.className = 'p-2 bg-[#2a2a4a] rounded mb-2 cursor-move';
+                    el.draggable = true;
+                    sourceStepsEl.appendChild(el);
+                });
+                addDragListeners();
+            };
+
+            function addDragListeners() {
+                const draggables = document.querySelectorAll('#source-steps div, #target-steps div');
+                draggables.forEach(draggable => {
+                    draggable.addEventListener('dragstart', () => draggable.classList.add('opacity-50'));
+                    draggable.addEventListener('dragend', () => draggable.classList.remove('opacity-50'));
+                });
+                [sourceStepsEl, targetStepsEl].forEach(container => {
+                    container.addEventListener('dragover', e => {
+                        e.preventDefault();
+                        const afterElement = getDragAfterElement(container, e.clientY);
+                        const draggable = document.querySelector('.opacity-50');
+                        if (afterElement == null) {
+                            container.appendChild(draggable);
+                        } else {
+                            container.insertBefore(draggable, afterElement);
+                        }
+                    });
+                });
+            }
+
+            function getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('div:not(.opacity-50)')];
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+
+            checkDecompositionBtn.addEventListener('click', () => {
+                const userOrder = [...targetStepsEl.children].map(el => el.textContent);
+                if (JSON.stringify(userOrder) === JSON.stringify(correctOrder)) {
+                    decompositionResultEl.textContent = 'Benar! Urutanmu tepat.';
+                    decompositionResultEl.className = 'mt-4 font-bold text-green-400';
+                } else {
+                    decompositionResultEl.textContent = 'Belum tepat. Coba lagi!';
+                    decompositionResultEl.className = 'mt-4 font-bold text-red-400';
+                }
+            });
+
+            // Game 2: Pengenalan Pola
+            const patternDisplay = document.getElementById('pattern-display');
+            const patternOptionsEl = document.getElementById('pattern-options');
+            const patternResultEl = document.getElementById('pattern-result');
+            const nextPatternBtn = document.getElementById('next-pattern');
+
+            const patterns = [
+                { sequence: ['🍎', '🍎', '🍌', '🍌'], options: ['🍎', '🍌', '🍊'], answer: '🍎' },
+                { sequence: ['🟥', '🟨', '🟦', '🟥', '🟨'], options: ['🟥', '🟨', '🟦'], answer: '🟦' },
+                { sequence: ['⬆️', '➡️', '⬇️', '⬅️', '⬆️'], options: ['⬆️', '➡️', '⬇️'], answer: '➡️' },
+                { sequence: ['A', 'B', 'C', 'A', 'B'], options: ['A', 'B', 'C'], answer: 'C'}
+            ];
+            let currentPatternIndex = 0;
+
+            const loadPattern = () => {
+                patternResultEl.textContent = '';
+                const pattern = patterns[currentPatternIndex];
+                patternDisplay.innerHTML = pattern.sequence.map(item => `<span>${item}</span>`).join('') + '<span>?</span>';
+                patternOptionsEl.innerHTML = '';
+                pattern.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.textContent = opt;
+                    btn.className = 'p-4 bg-[#2a2a4a] rounded-lg text-4xl';
+                    btn.onclick = () => checkPattern(opt === pattern.answer);
+                    patternOptionsEl.appendChild(btn);
+                });
+            };
+
+            const checkPattern = (isCorrect) => {
+                if(isCorrect){
+                    patternResultEl.textContent = 'Benar!';
+                    patternResultEl.className = 'mt-4 font-bold h-6 text-green-400';
+                } else {
+                    patternResultEl.textContent = 'Coba Lagi!';
+                    patternResultEl.className = 'mt-4 font-bold h-6 text-red-400';
+                }
+            };
+
+            nextPatternBtn.addEventListener('click', () => {
+                currentPatternIndex = (currentPatternIndex + 1) % patterns.length;
+                loadPattern();
+            });
+            
+            // Game 3: Algoritma
+            const mazeContainer = document.getElementById('maze-container');
+            const commandListEl = document.getElementById('command-list');
+            const commandBtns = document.querySelectorAll('.command-btn');
+            const clearCommandsBtn = document.getElementById('clear-commands');
+            const runAlgorithmBtn = document.getElementById('run-algorithm');
+            const algorithmResultEl = document.getElementById('algorithm-result');
+
+            const mazeLayout = [
+                'S', ' ', '🧱', ' ', ' ', ' ', ' ', ' ',
+                ' ', ' ', '🧱', ' ', '🧱', ' ', '🧱', ' ',
+                ' ', ' ', ' ', ' ', '🧱', ' ', '🧱', ' ',
+                ' ', '🧱', '🧱', ' ', ' ', ' ', ' ', ' ',
+                ' ', ' ', ' ', ' ', '🧱', ' ', '🧱', ' ',
+                ' ', '🧱', ' ', ' ', '🧱', ' ', '🧱', ' ',
+                ' ', '🧱', ' ', ' ', ' ', ' ', ' ', ' ',
+                ' ', ' ', ' ', '🧱', '🧱', '🧱', ' ', '🏁',
+            ];
+            let playerPos = { x: 0, y: 0 };
+            let commands = [];
+
+            const drawMaze = () => {
+                mazeContainer.innerHTML = '';
+                mazeLayout.forEach((cell, index) => {
+                    const cellEl = document.createElement('div');
+                    cellEl.className = 'flex items-center justify-center text-xl';
+                    if (index === playerPos.y * 8 + playerPos.x) {
+                        cellEl.textContent = '🤖';
+                    } else if (cell === 'S') {
+                         // Don't show S, it's just the start pos
+                    } else {
+                        cellEl.textContent = cell;
+                    }
+                    mazeContainer.appendChild(cellEl);
+                });
+            };
+
+            const resetMaze = () => {
+                playerPos = { x: 0, y: 0 };
+                commands = [];
+                commandListEl.innerHTML = '';
+                algorithmResultEl.textContent = '';
+                drawMaze();
+            };
+
+            commandBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const command = btn.dataset.command;
+                    commands.push(command);
+                    commandListEl.textContent = commands.join(' ');
+                });
+            });
+
+            clearCommandsBtn.addEventListener('click', () => {
+                commands = [];
+                commandListEl.textContent = '';
+            });
+
+            runAlgorithmBtn.addEventListener('click', async () => {
+                playerPos = { x: 0, y: 0 }; // Reset position
+                algorithmResultEl.textContent = '';
+                runAlgorithmBtn.disabled = true;
+
+                for (const command of commands) {
+                    let newX = playerPos.x;
+                    let newY = playerPos.y;
+
+                    if (command === '⬆️') newY--;
+                    if (command === '⬇️') newY++;
+                    if (command === '⬅️') newX--;
+                    if (command === '➡️') newX++;
+                    
+                    if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8 && mazeLayout[newY * 8 + newX] !== '🧱') {
+                        playerPos = { x: newX, y: newY };
+                        drawMaze();
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        if (mazeLayout[playerPos.y * 8 + playerPos.x] === '🏁') {
+                            algorithmResultEl.textContent = 'Selamat, kamu berhasil!';
+                            algorithmResultEl.className = 'mt-4 font-bold text-green-400';
+                            runAlgorithmBtn.disabled = false;
+                            return;
+                        }
+                    } else {
+                        algorithmResultEl.textContent = 'Oh tidak, menabrak!';
+                        algorithmResultEl.className = 'mt-4 font-bold text-red-400';
+                        runAlgorithmBtn.disabled = false;
+                        return;
+                    }
+                }
+                algorithmResultEl.textContent = 'Belum sampai tujuan. Coba lagi!';
+                algorithmResultEl.className = 'mt-4 font-bold text-yellow-400';
+                runAlgorithmBtn.disabled = false;
+            });
+
+            // Initialize all games
+            initDecompositionGame();
+            loadPattern();
+            resetMaze();
+        });
+    </script>
+</body>
+</html>
