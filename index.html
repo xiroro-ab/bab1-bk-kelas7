@@ -12,7 +12,21 @@
             font-family: 'Inter', sans-serif;
             background-color: #1a1a2e;
             color: #e0e0e0;
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
         }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(233, 69, 96, 0.1) 0%, rgba(26, 26, 46, 0) 50%);
+            animation: lightMove 25s linear infinite;
+            z-index: 0;
+        }
+
         .sticky-header {
             position: sticky;
             top: 0;
@@ -23,6 +37,7 @@
         }
         .sidebar {
             transition: transform 0.3s ease-in-out;
+            z-index: 60; /* Ensure sidebar is above the light effect */
         }
         .sidebar-overlay {
             transition: opacity 0.3s ease-in-out;
@@ -42,10 +57,20 @@
         .card {
             background: linear-gradient(145deg, #1e1e38, #2a2a4a);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; /* For z-index to work */
+            z-index: 10;
+            animation: float 6s ease-in-out infinite;
+        }
+        .card:nth-of-type(2) {
+            animation-delay: 2s;
+        }
+        .card:nth-of-type(3) {
+            animation-delay: 4s;
         }
         .card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 25px -5px rgba(233, 69, 96, 0.3), 0 10px 10px -5px rgba(233, 69, 96, 0.2);
+            box-shadow: 0 20px 25px -5px rgba(233, 69, 96, 0.3), 0 10px 10px -5px rgba(233, 69, 96, 0.2), 0 0 20px rgba(233, 69, 96, 0.5);
+            animation-play-state: paused; /* Pause floating animation on hover */
         }
         .btn-primary {
             background: linear-gradient(45deg, #e94560, #9f3d5b);
@@ -53,7 +78,10 @@
         }
         .btn-primary:hover {
             transform: scale(1.05);
-            box-shadow: 0 10px 15px -3px rgba(233, 69, 96, 0.4);
+            box-shadow: 0 10px 15px -3px rgba(233, 69, 96, 0.4), 0 0 20px rgba(233, 69, 96, 0.6);
+        }
+        .btn-primary:active, .command-btn:active, .bg-gray-600:active {
+             transform: scale(0.95);
         }
         .progress-bar-inner {
             transition: width 0.5s ease-in-out;
@@ -69,6 +97,35 @@
         }
         .fade-in {
             animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes lightMove {
+            0% { transform: translate(10%, 10%) rotate(0deg); }
+            25% { transform: translate(-10%, 10%) rotate(90deg); }
+            50% { transform: translate(-10%, -10%) rotate(180deg); }
+            75% { transform: translate(10%, -10%) rotate(270deg); }
+            100% { transform: translate(10%, 10%) rotate(360deg); }
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 5px #e94560, 0 0 10px #e94560; }
+            50% { text-shadow: 0 0 15px #e94560, 0 0 25px #e94560; }
+        }
+        .title-highlight {
+            animation: titlePulse 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-pop-in {
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
         }
         
         /* Custom scrollbar */
@@ -108,7 +165,7 @@
 
     <!-- Sidebar -->
     <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-50 opacity-0 pointer-events-none lg:hidden"></div>
-    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-64 bg-[#161625] text-white p-4 z-50 transform -translate-x-full lg:translate-x-0 flex flex-col">
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-64 bg-[#161625] text-white p-4 transform -translate-x-full flex flex-col">
         <h2 class="text-2xl font-bold mb-8 text-center text-white flex-shrink-0">Informatika K7</h2>
         <div class="flex-grow overflow-y-auto">
             <nav>
@@ -156,10 +213,10 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="lg:ml-64 transition-all duration-300">
+    <div id="main-content" class="transition-all duration-300">
         <!-- Header -->
         <header class="sticky-header flex items-center justify-between p-4">
-            <button id="menu-btn" class="text-white lg:hidden">
+            <button id="menu-btn" class="text-white z-50">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
             <h1 id="page-title" class="text-xl font-bold text-white">Beranda</h1>
@@ -167,11 +224,11 @@
         </header>
 
         <!-- Page Content -->
-        <main class="p-6">
+        <main class="p-6 relative z-10">
             <section id="beranda" class="page fade-in">
                 <div class="text-center mb-12">
                     <img src="https://raw.githubusercontent.com/xiroro-ab/aris-bermansyah-komponen-sistem-komputer/refs/heads/main/IMG_7135.jpg" alt="Foto Aris Bermansyah" class="w-32 h-32 rounded-full mx-auto mb-6 object-cover border-4 border-[#e94560]">
-                    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Selamat Datang di Dunia <span class="text-[#e94560]">Berpikir Komputasional</span></h1>
+                    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Selamat Datang di Dunia <span class="text-[#e94560] title-highlight">Berpikir Komputasional</span></h1>
                     <p class="text-lg text-gray-300 max-w-3xl mx-auto">Platform interaktif untuk mempelajari dasar-dasar informatika bagi siswa kelas 7. Mari asah logika dan kemampuan memecahkan masalahmu!</p>
                 </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -269,21 +326,21 @@
                  <div id="leaderboard-content" class="hidden">
                      <!-- Podium -->
                      <div class="flex justify-center items-end gap-4 mb-12">
-                         <div id="podium-2" class="text-center w-1/4">
+                         <div id="podium-2" class="text-center w-1/4 opacity-0" style="--delay: 0.2s;">
                              <div class="bg-[#1e1e38] p-4 rounded-lg podium-2">
                                  <div class="text-4xl">🥈</div>
                                  <h3 class="font-bold text-lg truncate"></h3>
                                  <p class="text-2xl font-bold text-gray-300"></p>
                              </div>
                          </div>
-                         <div id="podium-1" class="text-center w-1/3">
+                         <div id="podium-1" class="text-center w-1/3 opacity-0" style="--delay: 0s;">
                               <div class="bg-[#1e1e38] p-6 rounded-lg podium-1">
                                  <div class="text-5xl">🥇</div>
                                  <h3 class="font-bold text-xl truncate"></h3>
                                  <p class="text-3xl font-bold text-yellow-300"></p>
                              </div>
                          </div>
-                         <div id="podium-3" class="text-center w-1/4">
+                         <div id="podium-3" class="text-center w-1/4 opacity-0" style="--delay: 0.4s;">
                               <div class="bg-[#1e1e38] p-4 rounded-lg podium-3">
                                  <div class="text-4xl">🥉</div>
                                  <h3 class="font-bold text-lg truncate"></h3>
@@ -374,14 +431,28 @@
             const menuBtn = document.getElementById('menu-btn');
             const sidebar = document.getElementById('sidebar');
             const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const mainContent = document.getElementById('main-content');
             const pages = document.querySelectorAll('.page');
             const menuItems = document.querySelectorAll('.menu-item, .submenu-item');
             const pageTitle = document.getElementById('page-title');
 
             const toggleSidebar = () => {
-                sidebar.classList.toggle('-translate-x-full');
-                sidebarOverlay.classList.toggle('opacity-0');
-                sidebarOverlay.classList.toggle('pointer-events-none');
+                const isHidden = sidebar.classList.contains('-translate-x-full');
+                if (isHidden) {
+                    sidebar.classList.remove('-translate-x-full');
+                    if (window.innerWidth >= 1024) {
+                        mainContent.classList.add('lg:ml-64');
+                    } else {
+                        sidebarOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                    }
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    if (window.innerWidth >= 1024) {
+                        mainContent.classList.remove('lg:ml-64');
+                    } else {
+                        sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
+                    }
+                }
             };
 
             menuBtn.addEventListener('click', toggleSidebar);
@@ -389,7 +460,10 @@
 
             window.navigateTo = (hash) => {
                 if (window.innerWidth < 1024) {
-                    toggleSidebar();
+                    // Only close if it's open on mobile
+                    if (!sidebar.classList.contains('-translate-x-full')) {
+                        toggleSidebar();
+                    }
                 }
                 showPage(hash);
             }
@@ -616,16 +690,12 @@
                 leaderboardContent.classList.add('hidden');
                 
                 try {
-                    // Fetching data directly from the Google Apps Script URL.
-                    // The script needs to be deployed correctly to handle GET requests from anyone.
                     const response = await fetch(SPREADSHEET_URL);
                     if (!response.ok) {
                         throw new Error(`Network response was not ok: ${response.statusText}`);
                     }
                     const data = await response.json();
                     
-                    // Filter out entries with invalid scores and sort the data.
-                    // Assumes the script returns an array of objects with 'Skor', 'Nama', 'Kelas'.
                     const sortedData = data
                         .filter(player => player.Skor !== undefined && player.Skor !== null && player.Nama)
                         .sort((a, b) => b.Skor - a.Skor);
@@ -639,15 +709,14 @@
             };
 
             const updateLeaderboardUI = (data) => {
-                // Clear previous data
                 leaderboardTable.innerHTML = '';
                 Object.values(podiumElements).forEach(el => {
                     el.querySelector('h3').textContent = '-';
                     el.querySelector('p').textContent = '-';
                     el.style.visibility = 'hidden';
+                    el.classList.remove('animate-pop-in');
                 });
 
-                // Populate podium
                 data.slice(0, 3).forEach((player, index) => {
                     const rank = index + 1;
                     const podiumEl = podiumElements[rank];
@@ -655,10 +724,11 @@
                         podiumEl.querySelector('h3').textContent = player.Nama;
                         podiumEl.querySelector('p').textContent = player.Skor;
                         podiumEl.style.visibility = 'visible';
+                        podiumEl.style.animationDelay = podiumEl.style.getPropertyValue('--delay');
+                        podiumEl.classList.add('animate-pop-in');
                     }
                 });
 
-                // Populate table
                 data.forEach((player, index) => {
                     const rank = index + 1;
                     const row = document.createElement('tr');
@@ -676,7 +746,6 @@
                 leaderboardContent.classList.remove('hidden');
             };
             
-            // Load leaderboard when the page is visited
             const leaderboardObserver = new MutationObserver((mutations) => {
               mutations.forEach((mutation) => {
                 if (mutation.attributeName === 'class' && !document.getElementById('peringkat').classList.contains('hidden')) {
